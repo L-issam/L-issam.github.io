@@ -72,18 +72,18 @@ function ProjectDetail() {
         • Interface administrative
         
         Stack technique :
-        • React pour le frontend
-        • Node.js/Express pour l'API
-        • MongoDB pour la base de données
-        • JWT pour l'authentification
+        • WordPress & WooCommerce
+        • PHP personnalisé
+        • JavaScript moderne
+        • API WooCommerce
         
-        Architecture :
-        • Frontend React modulaire
-        • API RESTful sécurisée
-        • Base de données NoSQL
-        • Système de cache intégré
+        Optimisations :
+        • SEO avancé
+        • Performance et cache
+        • Sécurité renforcée
+        • UX/UI optimisée
         
-        L'application suit les meilleures pratiques de développement web moderne avec une architecture scalable.`,
+        L'application suit les meilleures pratiques de développement WordPress avec une architecture extensible.`,
       image: "/img/ecommerce.png",
       github: "https://github.com/l-issam/ecommerce-app"
     }
@@ -91,22 +91,32 @@ function ProjectDetail() {
 
   const project = projectDetails[id];
 
+  if (!project) {
+    return <div>Projet non trouvé</div>;
+  }
+
   return (
-    <div className="project-detail">
-      <div className="project-detail-header">
-        <h1>{project.title}</h1>
-        <img src={project.image} alt={project.title} />
-      </div>
-      <div className="project-detail-content">
-        <pre className="project-description">{project.fullDescription}</pre>
-        <div className="project-links">
-          <a href={project.github} target="_blank" rel="noopener noreferrer">
-            Voir sur GitHub
-          </a>
-          <Link to="/">Retour au portfolio</Link>
+    <>
+      <nav className="project-nav">
+        <Link to="/" className="nav-home">
+          ← Retour au portfolio
+        </Link>
+      </nav>
+      <div className="project-detail">
+        <div className="project-detail-header">
+          <h1>{project.title}</h1>
+          <img src={project.image} alt={project.title} />
+        </div>
+        <div className="project-detail-content">
+          <pre className="project-description">{project.fullDescription}</pre>
+          <div className="project-links">
+            <a href={project.github} target="_blank" rel="noopener noreferrer">
+              Voir sur GitHub
+            </a>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
