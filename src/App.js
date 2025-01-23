@@ -28,23 +28,23 @@ function App() {
     {
       id: 'qa-system',
       title: "Système Q&A PDF",
-      description: "Application interactive de Questions-Réponses permettant aux utilisateurs de charger des PDFs et d'obtenir des réponses pertinentes basées sur leur contenu. Utilise des techniques avancées de NLP et une architecture moderne.",
+      description: "Application interactive de Questions-Réponses permettant de charger des PDFs et d'obtenir des réponses pertinentes basées sur leur contenu. Utilise des techniques avancées de NLP et une architecture moderne.",
       image: "qa-system.png",
-      technologies: ["Python", "Streamlit", "NLP", "Vector DB", "PDF Processing"]
+      technologies: ["Python", "Streamlit", "NLP", "Vector DB", "PDF Processing", "Modèles d'IA en locale"]
     },
     {
       id: 'voice-assistant',
       title: "Assistant Vocal IA",
-      description: "Application d'assistant vocal en temps réel utilisant l'API Google Cloud Speech-to-Text. Interface graphique intuitive avec monitoring des ressources système et transcription en direct.",
+      description: "Application d'assistant vocal en temps réel utilisant l'API Google Cloud Speech-to-Text. Interface graphique intuitive avec monitoring des ressources système, les transcriptions en direct et les réponses et analyses en temps réel.",
       image: "voice-assistant.png",
       technologies: ["Python", "Google Cloud", "Speech-to-Text", "Tkinter", "Real-time Processing"]
     },
     {
       id: 'ecommerce',
       title: "Application E-commerce",
-      description: "Développement d'une plateforme e-commerce robuste exploitant WordPress et WooCommerce, à travers des thèmes des hooks et des filtres WordPress.",
+      description: "Développement d'une plateforme e-commerce robuste exploitant WordPress et WooCommerce, à travers des thèmes et des extensions bien choisies, des hooks et des filtres WordPress ainsi que du code personnalisé.",
       image: "ecommerce.png",
-      technologies: ["PHP", "JS", "Optimisation SEO", "WooCommerce API"]
+      technologies: ["WordPress", "WooCommerce API", "Webhooks", "PHP", "JS", "Optimisation SEO"]
     }
   ];
 
@@ -185,7 +185,7 @@ function App() {
                                 className={`platform-link platform-link-${platform.name.toLowerCase()}`}
                               >
                                 {platform.name === "Fiverr" && "Commander sur Fiverr"}
-                                {platform.name === "Upwork" && "Me recruter sur Upwork"}
+                                {platform.name === "Upwork" && "Travailler avec moi sur Upwork"}
                                 {platform.name === "Malt" && "Collaborer via Malt"}
                               </a>
                             )}
