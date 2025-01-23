@@ -38,8 +38,8 @@
 }
 
 .App-header h1 {
-  font-size: 4.5rem;
-  margin-bottom: 1rem;
+  font-size: 3.5rem;
+  margin: 1rem 0;
   position: relative;
   z-index: 2;
   font-weight: 700;
@@ -336,7 +336,7 @@ footer {
 
 .project-links a:last-child {
   border: 2px solid #0F2027;
-  color: #0F2027;
+  color: white;
 }
 
 .project-links a:hover {
