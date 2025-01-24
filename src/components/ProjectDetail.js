@@ -99,7 +99,7 @@ function ProjectDetail() {
     <>
       <nav className="project-nav">
         <Link to="/" className="nav-home">
-          ← Retour au portfolio
+          ← Revenir
         </Link>
       </nav>
       <div className="project-detail">

@@ -39,7 +39,7 @@
 
 .App-header h1 {
   font-size: 3.5rem;
-  margin: 1rem 0;
+  margin: -1rem 0 1rem 0;
   position: relative;
   z-index: 2;
   font-weight: 700;
@@ -267,6 +267,7 @@ footer {
   position: sticky;
   top: 0;
   z-index: 100;
+  text-align: left;
 }
 
 .nav-home {

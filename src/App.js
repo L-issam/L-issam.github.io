@@ -59,7 +59,7 @@ function App() {
       name: "Fiverr",
       logo: "fiverr-logo.webp",
       rating: 5,
-      reviews: 1,
+      reviews: 3,
       link: "https://www.fiverr.com/l-issam"
     },
     {
