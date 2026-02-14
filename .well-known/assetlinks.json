@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.askthedocs.app",
+      "sha256_cert_fingerprints": [
+        "8C:B2:6A:20:E9:E5:41:2B:2F:33:5A:C4:B7:DB:97:12:8D:23:D7:5E:B0:73:BF:EC:AB:E8:81:5F:1A:32:6F:7F"
+      ]
+    }
+  }
+]
