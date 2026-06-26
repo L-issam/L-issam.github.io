@@ -22,6 +22,17 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
+  /* Retour en haut — l'ancre #top ne scroll pas si elle est sur un élément fixed */
+  function scrollToTop(event) {
+    event.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+  }
+
+  document.querySelectorAll('a[href="#top"]').forEach((link) => {
+    link.addEventListener('click', scrollToTop);
+  });
+
   /* Menu mobile */
   if (navToggle && navMenu) {
     navToggle.addEventListener('click', () => {
