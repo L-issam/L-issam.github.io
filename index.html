@@ -14,9 +14,10 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div id="top" class="scroll-anchor" tabindex="-1"></div>
   <a class="skip-link" href="#main">Aller au contenu</a>
 
-  <header class="site-header" id="top">
+  <header class="site-header">
     <nav class="nav container" aria-label="Navigation principale">
       <a class="nav__logo" href="#top">IL<span class="nav__logo-dot">.</span></a>
       <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Ouvrir le menu">
@@ -204,6 +205,9 @@
         </header>
         <div class="projects-grid">
           <article class="card card--project reveal">
+            <div class="card__media card__media--icon">
+              <img src="assets/clipini-icon-512x512.png" alt="" width="512" height="512" loading="lazy" decoding="async">
+            </div>
             <div class="card__badge">SaaS · IA</div>
             <h3>Clipini</h3>
             <p>Plateforme SaaS d'analyse vidéo par IA. Analyse automatique de contenu, génération de résumés et contenus dérivés. Développement full-stack et déploiement cloud.</p>
@@ -214,18 +218,27 @@
           </article>
 
           <article class="card card--project reveal">
+            <div class="card__media card__media--splash">
+              <img src="assets/offlineaipro_1024x1024_splash.png" alt="OfflineAI Pro — IA locale hors-ligne sur Android" width="1024" height="1024" loading="lazy" decoding="async">
+            </div>
             <div class="card__badge">Android · Offline</div>
             <h3>OfflineAI Pro</h3>
             <p>Application 100 % hors-ligne après téléchargement initial. OCR, recherche sémantique (RAG), résumés et Q&amp;R sur documents. IA conversationnelle locale, confidentialité maximale. Achat unique 10 €.</p>
           </article>
 
           <article class="card card--project reveal">
+            <div class="card__media card__media--icon">
+              <img src="assets/woonotif_icon-512x512.png" alt="" width="512" height="512" loading="lazy" decoding="async">
+            </div>
             <div class="card__badge">Android · E-commerce</div>
             <h3>Woonotif</h3>
             <p>Notifications temps réel pour plusieurs boutiques WooCommerce, Shopify et Wix — centralisées dans une seule application mobile.</p>
           </article>
 
           <article class="card card--project reveal">
+            <div class="card__media card__media--banner">
+              <img src="assets/taghazit_logo_1440x720.png" alt="Taghazit — boutique e-commerce" width="1440" height="720" loading="lazy" decoding="async">
+            </div>
             <div class="card__badge">E-commerce · SEO</div>
             <h3>Taghazit</h3>
             <p>Site e-commerce WooCommerce : développement, personnalisation, SEO et intégration commerciale. Maintenance continue.</p>
@@ -271,7 +284,7 @@
             <a class="btn btn--primary" href="mailto:sslaouane@gmail.com">Me contacter</a>
             <a class="btn btn--ghost" href="https://github.com/L-issam" target="_blank" rel="noopener noreferrer">Profil GitHub</a>
           </div>
-          <p class="contact-card__note"> <code>sslaouane@gmail.com</code></p>
+          <p class="contact-card__note"><code>sslaouane@gmail.com</code></p>
         </div>
       </div>
     </section>
@@ -280,7 +293,12 @@
   <footer class="site-footer">
     <div class="container site-footer__inner">
       <p>&copy; <span id="year"></span> Issam L. Tous droits réservés.</p>
-      <a href="#top">Retour en haut</a>
+      <a href="#top" class="back-to-top" aria-label="Retour en haut">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M12 19V5M12 5l-6 6M12 5l6 6"/>
+        </svg>
+        <span class="back-to-top__label">Retour en haut</span>
+      </a>
     </div>
   </footer>
 
