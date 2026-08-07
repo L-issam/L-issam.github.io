@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Extraction d'informations clés sur tickets de caisse (enseigne, date, TTC) : problème, papier CUTIE, méthode, résultats et interprétations.">
+  <meta name="author" content="Issam L">
+  <meta name="theme-color" content="#0b1120">
+  <title>Receipt IE · Extraction de tickets · Issam.L</title>
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body class="page-case">
+  <div id="top" class="scroll-anchor" tabindex="-1"></div>
+  <a class="skip-link" href="#main">Aller au contenu</a>
+
+  <header class="site-header">
+    <nav class="nav container" aria-label="Navigation principale">
+      <a class="nav__logo" href="../index.html">IL<span class="nav__logo-dot">.</span></a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Ouvrir le menu">
+        <span></span>
+        <span></span>
+      </button>
+      <ul class="nav__menu" id="nav-menu">
+        <li><a href="../index.html#profil">Profil</a></li>
+        <li><a href="../index.html#projets">Projets</a></li>
+        <li><a href="#methode">Méthode</a></li>
+        <li><a href="#resultats">Résultats</a></li>
+        <li><a class="nav__cta" href="../index.html#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="case-hero" aria-labelledby="case-title">
+      <div class="container">
+        <p class="case-hero__crumb reveal">
+          <a href="../index.html#projets">Projets</a>
+          <span aria-hidden="true">/</span>
+          Receipt IE
+        </p>
+        <p class="section__label reveal">Projet · information extraction</p>
+        <h1 class="case-hero__title reveal" id="case-title">
+          Extraction d'informations clés sur <em>tickets de caisse</em>
+        </h1>
+        <p class="case-hero__lead reveal">
+          À partir d'images de tickets, récupérer l'enseigne, la date et le montant TTC.
+          Travail inspiré du papier CUTIE : OCR, annotation, CNN sur textes placés en grille, évaluation train/test.
+        </p>
+        <ul class="case-meta reveal" aria-label="Faits clés">
+          <li><span>Données</span> 200 tickets annotés</li>
+          <li><span>Split</span> 80 / 20 (seed 42)</li>
+          <li><span>Champs</span> Enseigne · Date · Total TTC</li>
+          <li><span>Stack</span> EasyOCR · PyTorch · CNN grille</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="probleme" aria-labelledby="probleme-title">
+      <div class="container case-narrow">
+        <header class="section__header reveal">
+          <span class="section__label">1. Problème</span>
+          <h2 id="probleme-title">Que veut-on extraire, et pourquoi c'est difficile</h2>
+        </header>
+        <div class="case-prose reveal">
+          <p>
+            On part d'une photo ou d'un scan de ticket. L'OCR donne une liste de fragments de texte
+            avec leurs positions (mots, montants, libellés). Ce n'est pas un tableau propre :
+            la mise en page change d'un commerçant à l'autre.
+          </p>
+          <p>
+            Les trois informations ciblées ici sont :
+          </p>
+          <ul>
+            <li><strong>Enseigne</strong> (MerchantName) : nom du commerçant</li>
+            <li><strong>Date</strong> : date imprimée sur le ticket</li>
+            <li><strong>Total</strong> : montant TTC final (pas le sous-total ni la TVA seule)</li>
+          </ul>
+          <p>
+            La difficulté vient surtout du contexte spatial. Un montant « 12,50 » peut être
+            un prix d'article, une taxe ou le total. Un modèle qui ne regarde que la séquence de mots
+            (approche type NER) ignore où le texte est placé sur la page. C'est précisément
+            le point que CUTIE cherche à corriger.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--alt" id="papier" aria-labelledby="papier-title">
+      <div class="container case-narrow">
+        <header class="section__header reveal">
+          <span class="section__label">2. Référence</span>
+          <h2 id="papier-title">Le papier CUTIE</h2>
+        </header>
+        <div class="case-prose reveal">
+          <p>
+            <cite>CUTIE: Learning to Understand Documents with Convolutional Universal Text Information Extractor</cite>
+            (Zhao et al., arXiv:1903.12363) propose d'appliquer un CNN sur des textes déjà reconnus,
+            en les rangeant dans une grille 2D qui conserve leur position relative sur le document.
+          </p>
+          <p>
+            Idée centrale : chaque cellule de la grille contient un token (ou est vide).
+            Un embedding transforme le texte en vecteur, puis des convolutions (y compris atrous / ASPP
+            dans la variante CUTIE-B) mélangent sémantique et voisinage spatial.
+            La sortie est une étiquette par cellule, comme une segmentation, mais sur une grille clairsemée
+            plutôt que sur des pixels.
+          </p>
+          <p>
+            Dans ce projet, on reprend l'idée grille + CNN (CUTIE-B simplifié), sur un petit jeu
+            de tickets (~200 images) et trois champs seulement, pour faire tourner et évaluer
+            le pipeline de bout en bout.
+          </p>
+          <p class="case-paper-link">
+            <a class="btn btn--ghost" href="../assets/receipt/cutie-1903.12363.pdf" target="_blank" rel="noopener noreferrer">
+              Lire le PDF (CUTIE)
+            </a>
+            <a class="case-ext-link" href="https://arxiv.org/abs/1903.12363" target="_blank" rel="noopener noreferrer">arXiv:1903.12363</a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="methode" aria-labelledby="methode-title">
+      <div class="container">
+        <header class="section__header reveal">
+          <span class="section__label">3. Méthode</span>
+          <h2 id="methode-title">Pipeline et choix de labels</h2>
+        </header>
+
+        <div class="case-narrow case-prose reveal">
+          <p>
+            Déroulement utiliséé :
+          </p>
+        </div>
+
+        <ol class="case-steps">
+          <li class="reveal">
+            <span class="case-steps__num">01</span>
+            <div>
+              <strong>OCR</strong>
+              <p>EasyOCR produit les tokens (texte + boîte) pour chaque image.</p>
+            </div>
+          </li>
+          <li class="reveal">
+            <span class="case-steps__num">02</span>
+            <div>
+              <strong>Annotation</strong>
+              <p>Pré-annotation par heuristiques, puis correction manuelle enseigne / date / TTC sur les 200 tickets.</p>
+            </div>
+          </li>
+          <li class="reveal">
+            <span class="case-steps__num">03</span>
+            <div>
+              <strong>Grille</strong>
+              <p>Chaque token est placé dans une cellule d'une grille 64×64 selon sa position sur l'image.</p>
+            </div>
+          </li>
+          <li class="reveal">
+            <span class="case-steps__num">04</span>
+            <div>
+              <strong>Modèle</strong>
+              <p>CNN CUTIE-B simplifié : classification de chaque cellule, puis agrégation des champs.</p>
+            </div>
+          </li>
+        </ol>
+
+        <div class="case-narrow case-prose reveal" style="margin-top: 2.5rem;">
+          <h3 class="case-subhead">Classes par cellule</h3>
+          <p>
+            Chaque case de la grille reçoit une seule classe parmi quatre :
+          </p>
+          <ul>
+            <li>
+              <strong>DontCare</strong> : tout ce qui n'est pas un des trois champs cibles
+              (lignes d'articles, TVA, adresse, sous-total, etc.), plus les cellules vides.
+              C'est la classe majoritaire. Sans elle, le modèle serait forcé d'attribuer
+              Merchant / Date / Total à presque tout.
+            </li>
+            <li><strong>MerchantName</strong> : tokens qui forment l'enseigne</li>
+            <li><strong>Date</strong> : tokens de la date (sans l'heure si elle est sur une autre ligne)</li>
+            <li><strong>Total</strong> : tokens du montant TTC retenu</li>
+          </ul>
+          <p>
+            Le déséquilibre DontCare / champs rares impose des poids de classes à l'entraînement.
+            Sinon le modèle peut coller une haute accuracy token en ne prédisant presque que DontCare.
+          </p>
+          <h3 class="case-subhead">Métriques</h3>
+          <p>
+            Deux lectures par champ, après reconstruction du texte prédit :
+          </p>
+          <ul>
+            <li><strong>soft</strong> : la référence est contenue dans la prédiction (texte en trop toléré)</li>
+            <li><strong>strict</strong> : égalité après normalisation (minuscules, espaces)</li>
+          </ul>
+          <p>
+            L'accuracy token (bonne classe par cellule) est aussi suivie, mais elle est tirée vers le haut
+            par DontCare. Les métriques par champ (surtout Total soft / strict) sont celles qui comptent
+            pour juger la tâche.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--alt" id="resultats" aria-labelledby="resultats-title">
+      <div class="container">
+        <header class="section__header reveal">
+          <span class="section__label">4. Résultats</span>
+          <h2 id="resultats-title">Mesures sur le jeu de test</h2>
+        </header>
+
+        <div class="case-kpi reveal" role="group" aria-label="Indicateurs test">
+          <div class="case-kpi__item">
+            <p class="case-kpi__value">65%</p>
+            <p class="case-kpi__label">Total soft (test)</p>
+          </div>
+          <div class="case-kpi__item">
+            <p class="case-kpi__value">8%</p>
+            <p class="case-kpi__label">Total strict (test)</p>
+          </div>
+          <div class="case-kpi__item">
+            <p class="case-kpi__value">68%</p>
+            <p class="case-kpi__label">Enseigne soft (test)</p>
+          </div>
+          <div class="case-kpi__item">
+            <p class="case-kpi__value">17%</p>
+            <p class="case-kpi__label">Date soft (test)</p>
+          </div>
+        </div>
+
+        <figure class="case-figure reveal">
+          <img
+            src="../assets/receipt/train_vs_test.png"
+            alt="Graphique en barres : comparaison train (160) vs test (40) sur enseigne soft, date soft, total soft, total strict et accuracy token."
+            width="1360"
+            height="720"
+            loading="lazy"
+            decoding="async"
+          >
+          <figcaption>
+            Comparaison train (160 tickets) / test (40). Soft train élevé sur enseigne, date et total ;
+            chute nette sur le test, surtout pour la date. L'accuracy token reste haute des deux côtés.
+          </figcaption>
+        </figure>
+
+        <div class="case-grid-2">
+          <figure class="case-figure reveal">
+            <img
+              src="../assets/receipt/learning_curves.png"
+              alt="Courbes train_loss et val_loss."
+              width="1280"
+              height="672"
+              loading="lazy"
+              decoding="async"
+            >
+            <figcaption>
+              Courbes d'apprentissage : le train_loss baisse rapidement, la val_loss se stabilise tôt.
+            </figcaption>
+          </figure>
+          <figure class="case-figure reveal">
+            <img
+              src="../assets/receipt/soft_metrics_epochs.png"
+              alt="Évolution des métriques soft Total, Enseigne et Date sur le set de test par epoch."
+              width="1280"
+              height="672"
+              loading="lazy"
+              decoding="async"
+            >
+            <figcaption>
+              Métriques soft sur le test au fil des epochs. Le meilleur Total soft n'est pas forcément
+              à la dernière epoch.
+            </figcaption>
+          </figure>
+        </div>
+
+        <figure class="case-figure case-figure--wide reveal">
+          <img
+            src="../assets/receipt/infer_preview.png"
+            alt="Exemple d'inférence sur un ticket : boîtes colorées pour enseigne, date et total."
+            width="1400"
+            height="585"
+            loading="lazy"
+            decoding="async"
+          >
+          <figcaption>
+            Exemple d'inférence : boîtes colorées = classes prédites ; champs agrégés Merchant / Date / Total
+            à droite de la barre du haut.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="interpretations" aria-labelledby="interpretations-title">
+      <div class="container case-narrow">
+        <header class="section__header reveal">
+          <span class="section__label">5. Interprétations</span>
+          <h2 id="interpretations-title">Lecture des résultats</h2>
+        </header>
+        <ul class="case-insights">
+          <li class="reveal">
+            <strong>Soft vs strict</strong>
+            Soft 65 % et strict 8 % sur le Total (test) : le montant correct apparaît souvent dans la
+            prédiction, mais avec du texte en trop (lignes voisines). Pour une égalité exacte,
+            le modèle n'est pas assez propre.
+          </li>
+          <li class="reveal">
+            <strong>Accuracy token</strong>
+            Environ 80 % de cellules bien classées. Ça reste compatible avec un modèle qui rate
+            souvent Date / Total, parce que DontCare remplit la grille.
+          </li>
+          <li class="reveal">
+            <strong>Écart train / test</strong>
+            Soft à 100 % en train et nettement plus bas en test : le modèle mémorise bien les tickets
+            vus à l'entraînement. Avec 160 images, la généralisation reste limitée, surtout sur la date (17 % soft test).
+          </li>
+          <li class="reveal">
+            <strong>Choix du checkpoint</strong>
+            Suivre uniquement la loss ou uniquement le soft peut privilégier un modèle trop large
+            (beaucoup de faux positifs). Ici le checkpoint retenu mélange soft des champs et accuracy token.
+          </li>
+        </ul>
+        <div class="case-cta reveal">
+          <a class="btn btn--ghost" href="../index.html#projets">Retour aux projets</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <p>&copy; <span id="year"></span> Issam L. Tous droits réservés.</p>
+      <a href="#top" class="back-to-top" aria-label="Retour en haut">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M12 19V5M12 5l-6 6M12 5l6 6"/>
+        </svg>
+        <span class="back-to-top__label">Retour en haut</span>
+      </a>
+    </div>
+  </footer>
+
+  <script src="../script.js"></script>
+</body>
+</html>
